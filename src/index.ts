@@ -2,45 +2,30 @@ import express from "express";
 import morgan from "morgan";
 import sharp from "sharp";
 import { promises as fsPromises } from "fs";
+import { errorHandler } from "./middlewares";
+import { getFileNameWithExt } from "./util/file";
 
-const app = express();
+export const app = express();
 const port = 3000;
 
 app.use(morgan("dev"));
+
 const path = `E:/F/Udacity/Fullstack/image-processing-proj/src/assets`;
 const fullImagesPath = `${path}/full`;
 const thumbImagesPath = `${path}/thumb`;
 
-app.get("/api/images", async (req, res) => {
+app.get("/api/images", errorHandler, async (req, res) => {
   const { fileName, width, height } = req.query;
 
-  switch (true) {
-    case !fileName:
-      res.status(400).send({
-        error: "No file name provided.",
-        status: 400,
-      });
-      return;
-    case width == null || width === "":
-      res.status(400).send({
-        error: "No width provided.",
-        status: 400,
-      });
-      return;
-    case height == null || height === "":
-      res.status(400).send({
-        error: "No height provided.",
-        status: 400,
-      });
-      return;
-  }
-
   try {
-    const result = await fsPromises.readFile(
-      `${fullImagesPath}/${fileName}.jpg`
+    const _fileName = fileName as string;
+    const fileNameWithExt = getFileNameWithExt(_fileName);
+
+    const readFileResult = await fsPromises.readFile(
+      `${fullImagesPath}/${fileNameWithExt}`,
     );
 
-    const data = await sharp(result.buffer)
+    const data = await sharp(readFileResult.buffer)
       .resize(Number(width), Number(height))
       .jpeg({ mozjpeg: true })
       .toBuffer();
