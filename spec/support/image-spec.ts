@@ -1,15 +1,10 @@
-import express from "express";
-import supertest from "supertest";
-import { app } from "../../src";
+import { transformFile } from "../../src/util/file";
 
-const request = supertest(app);
-
-// describe("Test functionality", () => {
-//   it("should transform image properly", (done) => {
-//     request
-//       .get("/api/images?fileName=pic-1&width=200&height=200")
-//       .then((response) => {
-//         response.body;
-//       });
-//   });
-// });
+describe("Test functionality", () => {
+  it("should transform image properly", (done) => {
+    transformFile("pic-1", 200, 200).then((transformedFileName) => {
+      expect(transformedFileName).toContain("pic-1-200x200.jpg");
+      done();
+    });
+  });
+});
