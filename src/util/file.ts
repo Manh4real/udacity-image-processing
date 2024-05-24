@@ -1,4 +1,5 @@
 import { promises as fsPromises } from "fs";
+import path from "path";
 import sharp from "sharp";
 
 export const imageExtensions = ["jpg", "jpeg", "png", "gif", "webp"];
@@ -28,9 +29,10 @@ export async function transformFile(
   width: number,
   height: number,
 ): Promise<string> {
-  const path = `E:/F/Udacity/Fullstack/image-processing-proj/src/assets`;
-  const fullImagesPath = `${path}/full`;
-  const thumbImagesPath = `${path}/thumb`;
+  const _path = path.resolve(__dirname, "../../../src/assets");
+
+  const fullImagesPath = `${_path}/full`;
+  const thumbImagesPath = `${_path}/thumb`;
 
   const _fileName = fileName as string;
   const info = getFileNameWithExt(_fileName);
